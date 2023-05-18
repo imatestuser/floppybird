@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Flappy Bird</title>
+<style>
+body {
+  background-color: #000;
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  width: 500px;
+  height: 500px;
+}
+
+.bird {
+  fill: #fff;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  position: absolute;
+  top: 200px;
+  left: 200px;
+}
+
+.pipe {
+  fill: #000;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.pipe.top {
+  top: 0;
+}
+
+.pipe.bottom {
+  bottom: 0;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+var bird = {
+  x: 200,
+  y: 200,
+  velocity: 0
+};
+var pipes = [];
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the bird
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(bird.x, bird.y, 50, 50);
+
+  // Draw the pipes
+  for (var i = 0; i < pipes.length; i++) {
+    var pipe = pipes[i];
+    ctx.fillStyle = "#000";
+    ctx.fillRect(pipe.x, pipe.y, 100, 100);
+  }
+
+  // Update the bird's position
+  bird.y += bird.velocity;
+
+  // Check for collisions with the pipes
+  for (var i = 0; i < pipes.length; i++) {
+    var pipe = pipes[i];
+    if (bird.x > pipe.x - 50 && bird.x < pipe.x + 50 && bird.y > pipe.y - 50 && bird.y < pipe.y + 50) {
+      // Game over!
+      alert("Game over!");
+      return;
+    }
+  }
+
+  // Check for collisions with the ground
+  if (bird.y > canvas.height - 50) {
+    // Game over!
+    alert("Game over!");
+    return;
+  }
+
+  // Update the pipes' position
+  for (var i = 0; i < pipes.length; i++) {
+    var pipe = pipes[i];
+    pipe.x -= 5;
+    if (pipe.x < -100) {
+      pipes.splice(i, 1);
+    }
+  }
+
+  // Add a new pipe
+  pipes.push({
+    x: canvas.width + 100,
+    y: Math.floor(Math.random() * (canvas.height - 200)) + 100
+  });
+
+  // Request a redraw
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener("keydown", function(event) {
+  if (event.keyCode == 38) {
+    bird.velocity = -5;
+  }
+});
+
+draw();
+</script>
+</body>
+</html>
